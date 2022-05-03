@@ -27,8 +27,6 @@ The scripts in ```Data_Preparation_Matlab``` includes:
 2. **Volume Rendering Generation**: Generate 6 volume rendering videos for 6 different view angles. This is done by ```Main_Volume_Rendering.m``` automatically with pre-defined rendering parameters.
 3. **RSct Map**: The "ground-truth" WMA presence/absence of the video is labeled by quantitatively measuring regional shortening (RSct) of the endocardium using validated [surface feature tracking techniques](https://www.ahajournals.org/doi/full/10.1161/CIRCIMAGING.111.970061). Run ```Main_RSct.m``` to obtain the RSct map. Then project the RSct map onto each projection angle using the method introduced in paper supplemental material. *A video is labeled as abnormal if >35% voxels with projected RSct > -0.20.* You should record the labels into a spreadsheet.
 
-Please view some examples of the volume rendering video in the folder ```volume_rendering_video_examples```.
-
 
 ### Deep Learning WMA Detection:
 Use a deep learning framework to detect WMA from prepared volume rendering videos. Follow the steps indicated by file names to run the deep learning framework:
