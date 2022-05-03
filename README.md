@@ -8,7 +8,7 @@ Authors: Zhennong Chen, Francisco Contijoch, Elliot McVeigh<br />
 ## Description
 The clinical problem we tackle is to screen 4DCT cases for LV wall motion abnormality (WMA) in a simple and automatic way. We hypothesize that the deep learning (DL) technique can be useful to fulfill this mission. 
 
-4DCT data size is usually too large to fit into the current GPU. We solve this problem by leveraging the dynamic volume rendering technique. We convert 4DCT into 6 videos of volume-rendered left ventricle beating across one cardiac cycle. 6 videos have 6 different projection angles corresponding to every 60 degree rotation around the LV axis. Such volume rendering videos can accurately represent the high-resolution 4DCT data using highly-compressed data memory.
+4DCT data size is usually too large to fit into the current GPU. We solve this problem by leveraging the dynamic volume rendering technique. We convert 4DCT into 6 videos of volume-rendered left ventricle beating across one cardiac cycle. 6 videos have 6 different projection angles corresponding to every 60 degree rotation around the LV axis. Such volume rendering videos can accurately represent the LV wall motion in the high-resolution 4DCT using highly-compressed data memory.
 
 We then develope a deep learning framework with a pre-trained [Inception V3](https://www.tensorflow.org/api_docs/python/tf/keras/applications/inception_v3/InceptionV3) to extract image features from multiple frames of the volume rendering video, a **LSTM** to incorporate the temporal information and fully-connected layers to regress a binary classification of the WMA presence/absense in the volume rendering video.
 
