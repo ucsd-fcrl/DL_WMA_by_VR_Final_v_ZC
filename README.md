@@ -1,4 +1,4 @@
-# Wall_Motion_Abnormality_Detection_By_Deep learning_and_Volume_Rendering
+# LV Wall Motion Abnormality Detection By Deep learning and Dynamic Volume_Rendering
 
 This repo is for the paper: <br />
 "Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning" <br />
