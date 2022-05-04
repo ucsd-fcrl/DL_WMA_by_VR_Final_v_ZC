@@ -25,7 +25,8 @@ To start the experiment, you should have your 4DCT data with the LV blood-pool s
 The scripts in folder ```Data_Preparation_Matlab``` includes:
 1. **Image rotation**: rotate CT volume so LV long axis correspond to image z-axis. This is done by ```find_rotation_angle.m``` (by clicking anatomical landmarks) and ```make_rotated_data.m``` (rotate the image and segmentation data with pre-defined rotaiton angles)
 2. **Volume Rendering Generation**: Generate 6 volume rendering videos for 6 different view angles. This is done by ```Main_Volume_Rendering.m``` automatically with pre-defined rendering parameters.
-3. **RSct Map**: The "ground-truth" WMA presence/absence of the video is labeled by measuring regional shortening (RSct) of the endocardium using validated [surface feature tracking technique](https://www.ahajournals.org/doi/full/10.1161/CIRCIMAGING.111.970061). Run ```Main_RSct.m``` to obtain the RSct map. Then project the RSct map onto each projection angle using the method introduced in paper supplemental material. *A video is labeled as abnormal if >35% voxels with projected RSct > -0.20.* You should record the labels into a spreadsheet.
+3. **RSct Map**: The "ground-truth" WMA presence/absence of the video is labeled by measuring regional shortening (RSct) of the endocardium using validated [surface feature tracking technique](https://www.ahajournals.org/doi/full/10.1161/CIRCIMAGING.111.970061). Run ```Main_RSct.m``` to obtain the RSct map. Then project the RSct map onto each projection angle using the method introduced in paper. *A video is labeled as abnormal if >35% voxels with projected RSct > -0.20.* You should record the labels into a spreadsheet.
+    - see folder ```Ground_Truth_Label_Sheets``` for examples
 
 
 ### Deep Learning WMA Detection:
