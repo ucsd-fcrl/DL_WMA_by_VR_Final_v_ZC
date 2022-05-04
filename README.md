@@ -33,7 +33,7 @@ The scripts in folder ```Data_Preparation_Matlab``` includes:
 Use a deep learning framework to detect WMA from prepared volume rendering videos. Follow the steps indicated by file names to run the deep learning framework:
 
 - step 0A: define default parameters by running ```./defaults.sh```.<br />
-- step 0B: make the spreadsheet available for deep learning experiments by running ```DLWMA_pre1.py``` (organize the spreadsheet) and ```DLWMA_pre2.py``` (select input frames).<br />
+- step 0B: prepare the spreadsheets that can be read by deep learning models by running ```DLWMA_pre1.py``` (organize the spreadsheet) and ```DLWMA_pre2.py``` (select input frames).<br />
 - step 0C: partition the data if you need to do the n-fold cross-validation by running ```DLWMA_pre3.py```.<br />
 - step 1: obtain frames of the video by running ```DLWMA_main_1_extract_video_frame_images.py```.<br />
 - step 2: extract image features by running ```python DLWMA_main_2_extract_features.py```.<br />
