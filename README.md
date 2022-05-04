@@ -1,7 +1,8 @@
 # LV Wall Motion Abnormality Detection By Deep learning and Dynamic Volume Rendering
+**Author: Zhennong Chen, PhD**<br />
 
 This repo is for the paper: <br />
-"Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning" <br />
+*Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning* <br />
 Authors: Zhennong Chen, Francisco Contijoch, Elliot McVeigh<br />
 
 
