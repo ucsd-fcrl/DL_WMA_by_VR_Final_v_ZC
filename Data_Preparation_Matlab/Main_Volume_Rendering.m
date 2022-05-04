@@ -16,7 +16,8 @@ for i = 1:size(patient_list,1)
     class_list = [class_list;convertCharsToStrings(class)];
     id_list = [id_list;convertCharsToStrings(patient_list(i).name)];
 end
-%% Step 1: Load case
+
+%% Main script
 for num = 1:size(class_list,1)
     clear Image Image_LV Seg angle_list angle_increment I J image_files seg_files seg_raw WL WW
     patient_class = convertStringsToChars(class_list(num,:));
