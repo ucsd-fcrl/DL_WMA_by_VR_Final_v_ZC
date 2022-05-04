@@ -24,9 +24,7 @@ def train(data_type, data_file, batch, seq_length, model, learning_rate,learning
           class_limit=None, image_shape=None,
         batch_size=32, nb_epoch=100):
 
-    regression = 0
     monitor_par = 'val_acc'
-    sequence_len = seq_length
 
     # Helper: Save the model.
     save_folder = os.path.join(cg.save_dir,'models')
@@ -42,9 +40,7 @@ def train(data_type, data_file, batch, seq_length, model, learning_rate,learning
         save_best_only=False)
 
     # Helper: record results.
-    timestamp = time.time()
     csv_logger = CSVLogger(os.path.join(log_save_folder,  model + '_' + study_name + '-batch' + str(batch) + '-training-log' + '.csv'))
-
 
     # Get the data
     data = DataSet(
@@ -55,14 +51,14 @@ def train(data_type, data_file, batch, seq_length, model, learning_rate,learning
         class_limit=class_limit)
 
     # Get generators.
-    generator = data.frame_generator(batch_size, 'train', data_type,regression,True)
-    val_generator = data.frame_generator(batch_size, 'test', data_type,regression, True)
+    generator = data.frame_generator(batch_size, 'train', data_type,0,True)
+    val_generator = data.frame_generator(batch_size, 'test', data_type,0, True)
 
     # Get the model.
-    features_length = 2048 
-    rm = ResearchModels(len(data.classes), model, sequence_len, learning_rate,learning_decay,features_length, saved_model)
+    features_length = 2048  # default
+    rm = ResearchModels(len(data.classes), model, seq_length, learning_rate,learning_decay,features_length, saved_model)
 
-    # Use fit generator.
+    # Split training and validation
     train_data,test_data = data.split_train_test()
     print('training num: ',len(train_data),'testing num: ',len(test_data)) # testing means validation here
 

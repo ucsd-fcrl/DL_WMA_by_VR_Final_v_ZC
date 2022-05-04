@@ -16,12 +16,12 @@ cg = supplement.Experiment()
 
 
 excel_file = pd.read_excel(os.path.join(cg.save_dir,'Patient_List/movie_list_w_classes_w_picked_timeframes_train.xlsx'))
+# get patient_list
+patient_list = [excel_file.iloc[i]['Patient_ID'] for i in range(excel_file.shape[0])]
+patient_list = np.unique(np.asarray(patient_list))
 
 # if partition not done
 # randomly partition while ensuring the class ratio in each subsample is close to the populational class ratio
-
-# seed_in_A = 6177
-# seed_in_B = 3
 
 # calculate the populational ratio for each view angle
 populational_ratio = []
@@ -32,22 +32,16 @@ for angle in [0,60,120,180,240,300]:
 all_angle_populational_ratio = sum(populational_ratio) / len(populational_ratio)
 print(populational_ratio,all_angle_populational_ratio)
 
-# get patient_list
-patient_list = [excel_file.iloc[i]['Patient_ID'] for i in range(excel_file.shape[0])]
-patient_list = np.unique(np.asarray(patient_list))
-    
-# random shuffle
+# random shuffle until criterias are satisfied
 std = 0.06
 while 1:
     satisfy = 0
-        
     seed = np.random.randint(100000)
-    print(seed)
     np.random.seed(seed)
     np.random.shuffle(patient_list)
     patient_list_split = np.array_split(patient_list,cg.num_partitions)
-    Ratio = []
-    ALL_ANGLE_RATIO = []
+
+    Ratio = []; ALL_ANGLE_RATIO = []
     for ii in range(0,len(patient_list_split)):
         patient_group = patient_list_split[ii]
         group_ratio = []
@@ -75,25 +69,23 @@ while 1:
             check_all_angle.append(0)
 
     # check per_angle
-    check = []
+    check_per_angle = []
     for ii in range(0,len(patient_list_split)):
         for jj in range(0,6): # 6 angles
             a = Ratio[ii][jj]
             if (a <= (populational_ratio[jj] + std)) and (a >= (populational_ratio[jj] - std)):
-                check.append(1)
+                check_per_angle.append(1)
             else:
-                check.append(0)
+                check_per_angle.append(0)
 
-    print(check_all_angle,np.where(np.asarray(check) == 0)[0].shape[0] )
+    print(check_all_angle,np.where(np.asarray(check_per_angle) == 0)[0].shape[0] )
         
     # satisfication criteria
-    if (np.all(np.asarray(check_all_angle)) == True) and np.where(np.asarray(check) == 0)[0].shape[0] <= 3:
+    if (np.all(np.asarray(check_all_angle)) == True) and np.where(np.asarray(check_per_angle) == 0)[0].shape[0] <= 3:
         satisfy = 1
                 
     if satisfy == 1:
-        print(Ratio)
-        print(ALL_ANGLE_RATIO)
-        print('seed is ', seed)
+        print('seed is ', seed, ' ratios are: ', Ratio, ALL_ANGLE_RATIO)
         break
   
 
@@ -106,15 +98,13 @@ for i in range(cg.num_partitions):
     print(batch_list[i].shape)
     np.save(os.path.join(np_save_folder,'batch_'+str(i)+'.npy'), batch_list[i])
 
-# save  the partition resultsinto data_file.xlsx
+# save the partition results into data_file.xlsx
 batch_file = []
 for i in range(0,excel_file.shape[0]):
     case = excel_file.iloc[i]
     for batch in range(cg.num_partitions):
         if np.isin(case['Patient_ID'],patient_list_split[batch]) == 1:
             B = batch
-                
-
     batch_file.append([B, case['video_name']])
 
 batch_file = pd.DataFrame(batch_file,columns = ['batch','video_name'])

@@ -7,9 +7,11 @@
 
 # To run this script, type: ./DLWMA_main_4_predict.py
 
+from DLWMA_util_make_result_spreadsheet import Build_Spreadsheet
 from keras.callbacks import TensorBoard, ModelCheckpoint, CSVLogger
 from DLWMA_util_models import ResearchModels
 from DLWMA_util_data import DataSet
+from DLWMA_util_make_result_spreadsheet import *
 import argparse
 import pandas as pd
 import os
@@ -22,7 +24,6 @@ cg = supplement.Experiment()
 def test(data_type, data_file, batch_list, model, study_name, seq_length, saved_model=None,
              class_limit=None, image_shape=None, per_patient_analysis = True):
     
-    final_result_list = []
     data = DataSet(
                 data_file = data_file,
                 validation_batch = None,
@@ -30,21 +31,18 @@ def test(data_type, data_file, batch_list, model, study_name, seq_length, saved_
                 architecture = 'InceptionV3',
                 class_limit=class_limit
             )
-            
-    regression = 0
-    sequence_len = seq_length
 
     test_data = data.data
 
     # get prediction by each model
     prediction_list = []
     for i in range(0,len(batch_list)):
-        rm = ResearchModels(len(data.classes), model, sequence_len, 1e-5 ,1e-6,2048, saved_model[i])
+        rm = ResearchModels(len(data.classes), model, seq_length, 1e-5 ,1e-6,2048, saved_model[i])
         prediction_list_current_batch = []
         for sample in test_data:
             movie_id = sample['video_name']
             # get generator
-            p_generator = data.predict_generator(sample, data_type,regression)
+            p_generator = data.predict_generator(sample, data_type,0)
 
             # predict
             predict_output = rm.model.predict_generator(generator=p_generator,steps = 1)
@@ -56,67 +54,15 @@ def test(data_type, data_file, batch_list, model, study_name, seq_length, saved_
         prediction_list.append(prediction_list_current_batch)
 
     # organize the predictions into a spreadsheet
-    for t in range(0,len(test_data)):
-        sample = test_data[t]
-
-        case_result = [sample['video_name']]
-
-        #  find the majority
-        abnormal_predict_count = 0; normal_predict_count = 0
-        for i in range(0,len(batch_list)):
-            p = prediction_list[i][t]
-            case_result += [p]
-            if p == 1:
-                abnormal_predict_count += 1
-            else:
-                normal_predict_count += 1
-                
-        if abnormal_predict_count >= normal_predict_count:
-            case_result += [1]
-        else:
-            case_result += [0]
-            
-        case_result += [sample['Patient_Class'],sample['Patient_ID'],sample['angle']]
-        final_result_list.append(case_result)
-       
-
-    # write into excel sheet
-    column_list = ['video_name'] + ['predict_model_'+str(b) for b in batch_list] + ['predict_majority','Patient_Class','Patient_ID','angle']
-    df = pd.DataFrame(final_result_list,columns = column_list)
-    save_folder = os.path.join(cg.save_dir,'results')
-    df.to_excel(os.path.join(save_folder,model + '_' + study_name +'-testing.xlsx'),index=False)
-
-    # organize the per-video results into per-study analysis
+    build_sheet = Build_Spreadsheet(test_data,prediction_list,batch_list, model, study_name)
+    # make per-video result spreadsheet:
+    build_sheet.make_per_video_spreadsheet()
+    # make per-study result spreadsheet based on per-video result sheet:
     if per_patient_analysis == True:
-        testing_file= pd.read_excel(os.path.join(cg.save_dir,'results', model+ '_' + study_name + '-testing.xlsx'))
-        # find the patient_list by np.unique
-        patient_list = np.unique(testing_file['Patient_ID'])
-
-        per_patient_result_list = []
-        for p in patient_list:
-            data = testing_file.loc[testing_file['Patient_ID'] == p]
-            assert data.shape[0] == 6
-
-            patient_result = [data.iloc[0]['Patient_Class'], data.iloc[0]['Patient_ID']]
-            abnormal_count_predict = 0
-            for angle in [0,60,120,180,240,300]:
-                angle_data = data.loc[data['angle'] == angle]
-                
-                predict = angle_data.iloc[0]['predict_majority']
-                patient_result += [predict]
-                if predict == 1:
-                    abnormal_count_predict += 1
-                
-            patient_result += [abnormal_count_predict]
-            per_patient_result_list.append(patient_result)
-        
-        per_patient_result_df = pd.DataFrame(per_patient_result_list,columns = ['Patient_Class', 'Patient_ID',
-                'angle0_predict','angle60_predict','angle120_predict',
-                'angle180_predict','angle240_predict','angle300_predict','abnormal_count_predict'])
-        per_patient_result_df.to_excel(os.path.join(cg.save_dir,'results',model+ '_' + study_name +'-testing-per-study.xlsx'),index = False)
+        per_video_file= pd.read_excel(os.path.join(cg.save_dir,'results', model+ '_' + study_name + '-testing.xlsx'))
+        build_sheet.make_per_study_spreadsheet(per_video_file)
 
          
-    
 def main():
     data_file = os.path.join(cg.save_dir,'Patient_List/movie_list_w_classes_w_picked_timeframes_test.xlsx')
 

@@ -36,8 +36,6 @@ def get_patient_list_from_excel_file(excel_file,exclude_criteria = None):
     return patient_list
         
 
-
-
 # function: make folders
 def make_folder(folder_list):
     for i in folder_list:
@@ -65,60 +63,12 @@ def show_slices(slices,colormap = "gray",origin_point = "lower"):
         axes[i].imshow(slice.T, cmap=colormap, origin=origin_point)
 
 
-
-
-
 # function: get pixel dimensions
 def get_voxel_size(nii_file_name):
     ii = nib.load(nii_file_name)
     h = ii.header
     return h.get_zooms()
 
-
-
-# function: define the interpolation
-def define_interpolation(data,Fill_value=0,Method='linear'):
-    shape = data.shape
-    [x,y,z] = [np.linspace(0,shape[0]-1,shape[0]),np.linspace(0,shape[1]-1,shape[1]),np.linspace(0,shape[-1]-1,shape[-1])]
-    interpolation = RegularGridInterpolator((x,y,z),data,method=Method,bounds_error=False,fill_value=Fill_value)
-    return interpolation
-
-# function: reslice a mpr
-def reslice_mpr(mpr_data,plane_center,x,y,x_s,y_s,interpolation):
-    # plane_center is the center of a plane in the coordinate of the whole volume
-    mpr_shape = mpr_data.shape
-    new_mpr=[]
-    centerpoint = np.array([(mpr_shape[0]-1)/2,(mpr_shape[1]-1)/2,0])
-    for i in range(0,mpr_shape[0]):
-        for j in range(0,mpr_shape[1]):
-            delta = np.array([i,j,0])-centerpoint
-            v = plane_center + (x*x_s)*delta[0]+(y*y_s)*delta[1]
-            new_mpr.append(v)
-    new_mpr=interpolation(new_mpr).reshape(mpr_shape)
-    return new_mpr
-
-
-    
-# function: check affine from all time frames (affine may have errors in some tf, that's why we need to find the mode )
-def check_affine(one_time_frame_file_name):
-    """this function uses the affine with each element as the mode in all time frames"""
-    joinpath = os.path.join(os.path.dirname(one_time_frame_file_name),'*.nii.gz')
-    f = np.array(sorted(glob.glob(joinpath)))
-    a = np.zeros((4,4,len(f)))
-    count = 0
-    for i in f:
-        i = nib.load(i)
-        a[:,:,count] = i.affine
-        count += 1
-    mm =nib.load(f[0])
-    result = np.zeros((4,4))
-    for ii in range(0,mm.affine.shape[0]):
-        for jj in range(0,mm.affine.shape[1]):
-            l = []
-            for c in range(0,len(f)):
-                l.append(a[ii,jj,c])
-            result[ii,jj] = max(set(l),key=l.count)
-    return result
     
 
 # function: find ED (end-diastole) nd ES (end-systole)
@@ -227,29 +177,6 @@ def set_window(image,level,width):
             norm = (image[i,j] - (low)) * unit
             new[i,j] = norm
     return new
-
-# function: upsample image
-def upsample_images(image,up_size = 1):
-    # in case it's 2D image
-    if len(image.shape) == 2:
-        image = image.reshape(image.shape[0],image.shape[1],1)
-    # interpolation by RegularGridInterpolator only works for images with >1 slices, so we need to copy the current slice
-    I = np.zeros((image.shape[0],image.shape[1],2))
-    I[:,:,0] = image[:,:,0];I[:,:,1] = image[:,:,0]
-    # define interpolation
-    interpolation = define_interpolation(I,Fill_value=I.min(),Method='linear')
-    
-    new_image = []
-    new_size = [image.shape[0]*up_size,image.shape[1]*up_size]
-    
-    for i in range(0,new_size[0]):
-        for j in range(0,new_size[1]):
-            point = np.array([1/up_size*i,1/up_size*j,0])
-            new_image.append(point)
-            
-    new_image = interpolation(new_image).reshape(new_size[0],new_size[1],1)
-    return new_image
-
 
 # function: make movies of several .png files
 def make_movies(save_path,pngs,fps):
