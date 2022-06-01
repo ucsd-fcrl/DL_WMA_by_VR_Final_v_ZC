@@ -5,6 +5,8 @@ This repo is for the paper: <br />
 *Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning* <br />
 Authors: Zhennong Chen, Francisco Contijoch, Elliot McVeigh<br />
 
+**Citation**: Zhennong Chen, Francisco Contijoch, Gabrielle Colvert, Ashish Manohar, Andrew M. Kahn, Hari K. Narayan, Elliot McVeighh. "Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac Angiograms Using Deep Learning", Frontiers in Cardiovascular Medicine, May 2022, doi: 10.3389/fcvm.2022.919751
+
 
 ## Description
 The clinical problem we tackle is to screen 4DCT cases for LV wall motion abnormality (WMA) in a simple and automatic way. We hypothesize that the deep learning (DL) technique can be useful to fulfill this mission. 
