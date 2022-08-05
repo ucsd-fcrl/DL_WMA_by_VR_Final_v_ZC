@@ -2,7 +2,7 @@
 **Author: Zhennong Chen, PhD**<br />
 
 This repo is for the paper: <br />
-*[Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning]* (https://www.frontiersin.org/articles/10.3389/fcvm.2022.919751/full) <br />
+[Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac angiograms Using Deep Learning](https://www.frontiersin.org/articles/10.3389/fcvm.2022.919751/full) <br />
 Authors: Zhennong Chen, Francisco Contijoch, Elliot McVeigh<br />
 
 **Citation**: Zhennong Chen, Francisco Contijoch, Gabrielle Colvert, Ashish Manohar, Andrew M. Kahn, Hari K. Narayan, Elliot McVeigh. "Detection of Left Ventricular Wall Motion Abnormalities from Volume Rendering of 4DCT Cardiac Angiograms Using Deep Learning", Frontiers in Cardiovascular Medicine, May 2022, doi: 10.3389/fcvm.2022.919751
